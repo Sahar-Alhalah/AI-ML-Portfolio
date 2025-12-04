@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Covid Deaths Predictor</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="container">
+<div class="jumbotron mt-3">
+    <h1 class="display-4">Covid Deaths Predictor</h1>
+    <p class="lead">This is a simple predictor that uses ML to calculate the expected deaths in a week using the number
+        of the week in the year and the current cases number in this week in Brazil.</p>
+    <hr class="my-4">
+    <p>You can start by entering the week and cases numbers:</p>
+    <form class="form-inline">
+        <input max="52" type="number" id="week" class="form-control mt-3" placeholder="Week number"
+               aria-label="Week number"/>
+        <input max="212600000" type="number" id="cases" class="form-control mt-3" placeholder="Cases number"
+               aria-label="Cases number"/>
+        <a class="btn btn-primary btn-md" href="#" role="button" onclick="calculate()">Calculate</a>
+
+    </form>
+    <div class="col col-6 mt-3">
+        <div class="alert alert-success mt-3" role="alert" id="result" hidden></div>
+        <div class="alert alert-danger mt-3" role="alert" id="error" hidden></div>
+    </div>
+</div>
+<script>
+    function calculate() {
+        let weeks = document.getElementById("week").value;
+        let cases = document.getElementById("cases").value;
+        $.ajax({
+            type: "POST",
+            url: "/predict",
+            data: JSON.stringify({week: weeks, cases: cases}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "text",
+            success: function (msg) {
+                let json = JSON.parse(msg);
+                if (json.error) {
+                    $("#error").text(json.error);
+                    $("#result").text("");
+                    $("#error").show();
+                    $("#result").hide();
+                } else {
+                    $("#result").text("The expected deaths in this week is: " + json.deaths + " ±0.3");
+                    $("#error").text("");
+                    $("#result").show();
+                    $("#error").hide();
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
