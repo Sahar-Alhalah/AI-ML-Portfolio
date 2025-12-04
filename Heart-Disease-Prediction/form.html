@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Health Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .form-row div {
+            width: 48%;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .alert {
+            color: #d8000c;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Take Care of Your Heart - "Your Health is Your Wealth!"</h1>
+    </div>
+    <div class="container">
+        <h2>Heart Disease Predictor</h2>
+        <p class="intro">
+            Discover your heart health with our advanced AI-powered predictor. By analyzing key factors such as age, cholesterol levels, and heart rate, this tool offers a quick and reliable assessment of your risk for heart disease. Early detection leads to better prevention, empowering you to take control of your heart health today.
+        </p>
+        <p class="note">
+            *Please enter your details below to get your personalized heart health assessment.*
+        </p>
+
+        <!-- Flash messages section -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert">
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="/predict" method="post">
+            <div class="form-row">
+                <div>
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="1" max="120" required>
+                </div>
+                <div>
+                    <label for="sex">Sex:</label>
+                    <select id="sex" name="sex" required style="width: 100%;">
+                        <option value="0">Female</option>
+                        <option value="1">Male</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="cp">Chest Pain Type:</label>
+                    <select id="cp" name="cp" required style="width: 100%;">
+                        <option value="0">Asymptomatic</option>
+                        <option value="1">Atypical Angina</option>
+                        <option value="2">Non-anginal Pain</option>
+                        <option value="3">Typical Angina</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="trestbps">Resting Blood Pressure:</label>
+                    <input type="number" id="trestbps" name="trestbps" min="80" max="200" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="chol">Cholesterol:</label>
+                    <input type="number" id="chol" name="chol" min="99" max="600" required>
+                </div>
+                <div>
+                    <label for="fbs">Fasting Blood Sugar > 120 mg/dL:</label>
+                    <select id="fbs" name="fbs" required style="width: 100%;">
+                        <option value="0">False</option>
+                        <option value="1">True</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="restecg">Resting ECG Results:</label>
+                    <select id="restecg" name="restecg" required style="width: 100%;">
+                        <option value="0">Left Ventricular Hypertrophy</option>
+                        <option value="1">Normal</option>
+                        <option value="2">ST-T Wave Abnormality</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="thalach">Maximum Heart Rate:</label>
+                    <input type="number" id="thalach" name="thalach" min="60" max="220" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="exang">Exercise-Induced Angina:</label>
+                    <select id="exang" name="exang" required style="width: 100%;">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="oldpeak">Oldpeak:</label>
+                    <input type="number" id="oldpeak" name="oldpeak" step="0.1" min="0.0" max="6.0" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="slope">Slope of the Peak:</label>
+                    <select id="slope" name="slope" required style="width: 100%;">
+                        <option value="0">Upsloping</option>
+                        <option value="1">Flat</option>
+                        <option value="2">Downsloping</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ca">Number of Major Vessels (0-3):</label>
+                    <input type="number" id="ca" name="ca" min="0" max="3" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="thal">Thalassemia:</label>
+                    <select id="thal" name="thal" required style="width: 100%;">
+                        <option value="1">Fixed Defect</option>
+                        <option value="2">Normal Blood Flow</option>
+                        <option value="3">Reversible Defect</option>
+                    </select>
+                </div>
+            </div>
+
+            <input type="submit" value="Predict">
+        </form>
+
+        {% if prediction_text %}
+            <div class="result">
+                <h3>The Result Is: <br><span>{{ prediction_text }}</span></h3>
+            </div>
+        {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
